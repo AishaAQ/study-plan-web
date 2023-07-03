@@ -23,30 +23,39 @@ export default function Home() {
     smart: SmartBezierEdge
   } 
 
-  const updateSourceEdges = (id,sourceEdges,animate) => {
+  const updateSourceEdges = (id,sourceEdges,updatedEdges,animate) => {
     for (let i=0;i<edges.length;i++){
       if (edges[i]['target'] == id) {
-        edges[i].animated = animate
-        sourceEdges.push(edges[i])
-        updateSourceEdges(edges[i]['source'],sourceEdges, animate)
+        if (!updatedEdges.includes(edges[i].id)){
+          updatedEdges.push(edges[i].id)
+          edges[i].animated = animate
+          sourceEdges.push(edges[i])
+        }
+        updateSourceEdges(edges[i]['source'],sourceEdges,updatedEdges, animate)
       }
     }
     return sourceEdges
   }
 
-  const updateTargetEdges = (id,targetEdges,animate) => {
+  const updateTargetEdges = (id,targetEdges,updatedEdges,animate) => {
     for (let i=0;i<edges.length;i++){
       if (edges[i]['source'] == id) {
-        edges[i].animated = animate
-        targetEdges.push(edges[i])
-        updateTargetEdges(edges[i]['target'],targetEdges, animate)
+        if (!updatedEdges.includes(edges[i].id)){
+          edges[i].animated = animate
+          targetEdges.push(edges[i])
+        }
+        updateTargetEdges(edges[i]['target'],targetEdges,updatedEdges, animate)
       }
     }
     return targetEdges
   }
 
   const updateNodes = (id,newEdges,design) => {
-    nodes[id-1].data.class = design
+    if (design!=''){
+      nodes[id-1].data.class = 'ring-2 ring-green-100 ring-offset-2 ring-offset-green-300 shadow-md shadow-zinc-300'
+    } else {
+      nodes[id-1].data.class = ''
+    }
     let updatedNodes = [id]
     for (let i=0;i<newEdges.length;i++){
       if (!(updatedNodes.includes(newEdges[i]['source']))){
@@ -59,20 +68,18 @@ export default function Home() {
   }
 
   const update = (id,animate) => {
-    let newEdges = []
-    let sourceEdges = updateSourceEdges(id,[],animate)
-    let targetEdges = updateTargetEdges(id,[],animate)
-    newEdges = sourceEdges.concat(targetEdges)
+    let updatedEdges = []
+    let sourceEdges = updateSourceEdges(id,[],[],animate)
+    let targetEdges = updateTargetEdges(id,[],[],animate)
+    updatedEdges = sourceEdges.concat(targetEdges)
     if (animate) {
-      updateNodes(id,newEdges,'ring-1 ring-zinc-500 shadow-md shadow-zinc-300')
+      updateNodes(id,updatedEdges,'ring-1 ring-zinc-500 shadow-md shadow-zinc-300')
     } else {
-      updateNodes(id,newEdges,'')
+      updateNodes(id,updatedEdges,'')
     }
+    let newEdges = []
     for (let i=0;i<edges.length;i++) {
-      const exists = newEdges.filter(item => item.id === edges[i].id).length > 0;
-      if (!exists) {
-        newEdges.push(edges[i])
-      } 
+      newEdges.push(edges[i])
     }
     setEdges(newEdges)
   }
@@ -169,31 +176,32 @@ export default function Home() {
 }
 
 function Terms({terms}) {
+  let name = 'box-border border-3 rounded-xl border-sky-900 bg-zinc-50 w-20 h-9 text-sky-950 shadow-md font-medium text-sm text-center pt-1 tracking-wide'
   if (terms == 8 ){
     return (
       <div className='flex flex-row gap-18'>
-        <div className='box-border border-3 rounded-xl border-sky-900 bg-zinc-50 w-20 h-9 text-sky-950 shadow-md font-medium text-sm text-center pt-1 tracking-wide'>Term 1</div>
-        <div className='box-border border-3 rounded-xl border-sky-900 bg-zinc-50 w-20 h-9 text-sky-950 shadow-md font-medium text-sm text-center pt-1 tracking-wide'>Term 2</div>
-        <div className='box-border border-3 rounded-xl border-sky-900 bg-zinc-50 w-20 h-9 text-sky-950 shadow-md font-medium text-sm text-center pt-1 tracking-wide'>Term 3</div>
-        <div className='box-border border-3 rounded-xl border-sky-900 bg-zinc-50 w-20 h-9 text-sky-950 shadow-md font-medium text-sm text-center pt-1 tracking-wide'>Term 4</div>
-        <div className='box-border border-3 rounded-xl border-sky-900 bg-zinc-50 w-20 h-9 text-sky-950 shadow-md font-medium text-sm text-center pt-1 tracking-wide'>Term 5</div>
-        <div className='box-border border-3 rounded-xl border-sky-900 bg-zinc-50 w-20 h-9 text-sky-950 shadow-md font-medium text-sm text-center pt-1 tracking-wide'>Term 6</div>
-        <div className='box-border border-3 rounded-xl border-sky-900 bg-zinc-50 w-20 h-9 text-sky-950 shadow-md font-medium text-sm text-center pt-1 tracking-wide'>Term 7</div>
-        <div className='box-border border-3 rounded-xl border-sky-900 bg-zinc-50 w-20 h-9 text-sky-950 shadow-md font-medium text-sm text-center pt-1 tracking-wide'>Term 8</div>
+        <div className={name}>Term 1</div>
+        <div className={name}>Term 2</div>
+        <div className={name}>Term 3</div>
+        <div className={name}>Term 4</div>
+        <div className={name}>Term 5</div>
+        <div className={name}>Term 6</div>
+        <div className={name}>Term 7</div>
+        <div className={name}>Term 8</div>
       </div>
     )
   } else if (terms == 9) {
     return (
       <div className='flex flex-row gap-18'>
-        <div className='box-border border-3 rounded-xl border-sky-900 bg-zinc-50 w-20 h-9 text-sky-950 shadow-md font-medium text-sm text-center pt-1 tracking-wide'>Term 1</div>
-        <div className='box-border border-3 rounded-xl border-sky-900 bg-zinc-50 w-20 h-9 text-sky-950 shadow-md font-medium text-sm text-center pt-1 tracking-wide'>Term 2</div>
-        <div className='box-border border-3 rounded-xl border-sky-900 bg-zinc-50 w-20 h-9 text-sky-950 shadow-md font-medium text-sm text-center pt-1 tracking-wide'>Term 3</div>
-        <div className='box-border border-3 rounded-xl border-sky-900 bg-zinc-50 w-20 h-9 text-sky-950 shadow-md font-medium text-sm text-center pt-1 tracking-wide'>Term 4</div>
-        <div className='box-border border-3 rounded-xl border-sky-900 bg-zinc-50 w-20 h-9 text-sky-950 shadow-md font-medium text-sm text-center pt-1 tracking-wide'>Term 5</div>
-        <div className='box-border border-3 rounded-xl border-sky-900 bg-zinc-50 w-20 h-9 text-sky-950 shadow-md font-medium text-sm text-center pt-1 tracking-wide'>Term 6</div>
-        <div className='box-border border-3 rounded-xl border-sky-900 bg-zinc-50 w-20 h-9 text-sky-950 shadow-md font-medium text-sm text-center pt-1 tracking-wide'>Term 7</div>
-        <div className='box-border border-3 rounded-xl border-sky-900 bg-zinc-50 w-20 h-9 text-sky-950 shadow-md font-medium text-sm text-center pt-1 tracking-wide'>Term 8</div>
-        <div className='box-border border-3 rounded-xl border-sky-900 bg-zinc-50 w-20 h-9 text-sky-950 shadow-md font-medium text-sm text-center pt-1 tracking-wide'>Term 9</div>
+        <div className={name}>Term 1</div>
+        <div className={name}>Term 2</div>
+        <div className={name}>Term 3</div>
+        <div className={name}>Term 4</div>
+        <div className={name}>Term 5</div>
+        <div className={name}>Term 6</div>
+        <div className={name}>Term 7</div>
+        <div className={name}>Term 8</div>
+        <div className={name}>Term 9</div>
       </div>
     )
   }
